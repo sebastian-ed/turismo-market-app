@@ -343,3 +343,100 @@ textarea.form-control { min-height: 110px; }
   .scale-row { gap: 6px; }
   .brief-card { padding: 20px; }
 }
+
+/* Gestión admin extendida */
+.admin-tools-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.content-editor .accordion-item {
+  border-color: var(--line);
+}
+
+.content-editor .accordion-button {
+  font-weight: 700;
+}
+
+.content-subcard {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  background: var(--soft);
+  margin-bottom: 10px;
+}
+
+.option-group {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  background: var(--soft);
+}
+
+.option-editor-list {
+  display: grid;
+  gap: 10px;
+}
+
+.option-editor-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.8fr) minmax(210px, 1.4fr) minmax(210px, 1.6fr) auto auto;
+  gap: 10px;
+  align-items: start;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.option-id {
+  color: var(--muted);
+  font-size: 0.8rem;
+  word-break: break-word;
+  padding-top: 26px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-item {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  background: var(--soft);
+}
+
+.detail-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  white-space: pre-wrap;
+}
+
+.table th:first-child,
+.table td:first-child {
+  width: 42px;
+}
+
+@media (max-width: 991px) {
+  .option-editor-row {
+    grid-template-columns: 1fr;
+  }
+  .option-id {
+    padding-top: 0;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
