@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Radar de Prioridades Turísticas</title>
+  <meta name="description" content="Encuesta ejecutiva para detectar dolores, prioridades y oportunidades de servicios turísticos para organismos públicos.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg border-bottom bg-white sticky-top">
+    <div class="container py-2">
+      <a class="navbar-brand fw-semibold" href="index.html">Radar de Prioridades Turísticas</a>
+      <div class="ms-auto d-flex gap-2 align-items-center">
+        <a class="btn btn-sm btn-outline-secondary" href="admin.html">Panel admin</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <p class="eyebrow mb-3">Investigación ejecutiva · turismo público</p>
+            <h1 class="display-5 fw-semibold text-balance mb-3">Detectar problemas reales antes de diseñar soluciones.</h1>
+            <p class="lead text-secondary mb-4">Una encuesta breve para responsables de turismo municipal, provincial y nacional. El objetivo es identificar dolores concretos, urgencia, impacto y disposición a contratar servicios que resuelvan problemas prioritarios.</p>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge badge-soft">4–6 minutos</span>
+              <span class="badge badge-soft">Respuestas confidenciales</span>
+              <span class="badge badge-soft">Enfoque operativo</span>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="brief-card">
+              <div class="d-flex align-items-start gap-3 mb-3">
+                <div class="icon-box"><i class="bi bi-crosshair"></i></div>
+                <div>
+                  <h2 class="h5 mb-1">Qué buscamos entender</h2>
+                  <p class="mb-0 text-secondary">Qué les duele hoy, qué intentaron hacer, qué resultado necesitan mostrar y qué tipo de solución estarían dispuestos a contratar.</p>
+                </div>
+              </div>
+              <hr>
+              <p class="small text-secondary mb-0">No es una encuesta de satisfacción. Es una lectura de mercado para priorizar servicios con demanda real.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container pb-5">
+      <form id="surveyForm" class="survey-shell" novalidate>
+        <div id="configAlert" class="alert alert-warning d-none" role="alert">
+          Falta configurar Supabase en <strong>config.js</strong>. Completá Project URL y anon public key antes de publicar.
+        </div>
+
+        <div class="section-heading">
+          <span>1</span>
+          <div>
+            <h2>Perfil institucional</h2>
+            <p>Lo mínimo para segmentar respuestas sin volver pesada la encuesta.</p>
+          </div>
+        </div>
+
+        <div class="card form-card mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Nombre del destino / jurisdicción <span class="required">*</span></label>
+                <input class="form-control" name="jurisdiction_name" required placeholder="Ej. San Martín de los Andes">
+                <div class="invalid-feedback">Ingresá la jurisdicción.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Provincia</label>
+                <select class="form-select" name="province" id="provinceSelect">
+                  <option value="">Seleccionar...</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Nivel de gobierno <span class="required">*</span></label>
+                <select class="form-select" name="government_level" required>
+                  <option value="">Seleccionar...</option>
+                  <option>Municipal</option>
+                  <option>Provincial</option>
+                  <option>Nacional</option>
+                  <option>Ente mixto / público-privado</option>
+                  <option>Otro</option>
+                </select>
+                <div class="invalid-feedback">Seleccioná el nivel.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Tipo de destino <span class="required">*</span></label>
+                <select class="form-select" name="destination_type" required>
+                  <option value="">Seleccionar...</option>
+                  <option>Urbano / city break</option>
+                  <option>Naturaleza / aventura</option>
+                  <option>Cultural / patrimonial</option>
+                  <option>Rural / pueblos</option>
+                  <option>Sol y playa</option>
+                  <option>Eventos / reuniones</option>
+                  <option>Mixto</option>
+                </select>
+                <div class="invalid-feedback">Seleccioná el tipo de destino.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Tu rol en decisiones de contratación <span class="required">*</span></label>
+                <select class="form-select" name="decision_role" required>
+                  <option value="">Seleccionar...</option>
+                  <option>Decido directamente</option>
+                  <option>Influyo fuertemente</option>
+                  <option>Recomiendo técnicamente</option>
+                  <option>Ejecuto, pero no decido presupuesto</option>
+                  <option>Otro</option>
+                </select>
+                <div class="invalid-feedback">Seleccioná tu rol de decisión.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Cargo / función <span class="required">*</span></label>
+                <input class="form-control" name="role_title" required placeholder="Ej. Director/a de Turismo">
+                <div class="invalid-feedback">Ingresá tu cargo.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Organismo / área</label>
+                <input class="form-control" name="organization" placeholder="Ej. Secretaría de Turismo">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <span>2</span>
+          <div>
+            <h2>Problemas prioritarios</h2>
+            <p>Elegí hasta 4. La restricción fuerza foco; sin foco, no hay oportunidad comercial.</p>
+          </div>
+        </div>
+
+        <div class="card form-card mb-4">
+          <div class="card-body p-4">
+            <label class="form-label mb-3">¿Qué problemas pesan más hoy en tu gestión turística? <span class="required">*</span></label>
+            <div id="problemOptions" class="option-grid"></div>
+            <div class="form-text mt-2">Máximo 4 opciones.</div>
+            <div id="problemError" class="field-error d-none">Seleccioná entre 1 y 4 problemas.</div>
+            <div class="mt-3 d-none" id="otherProblemWrap">
+              <label class="form-label">Otro problema relevante</label>
+              <input class="form-control" name="top_problem_other" placeholder="Describilo en pocas palabras">
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <span>3</span>
+          <div>
+            <h2>Hair-on-fire y JTBD</h2>
+            <p>Acá aparece el problema que realmente compra. Lo demás suele ser decorado institucional.</p>
+          </div>
+        </div>
+
+        <div class="card form-card mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Si mañana consiguieras apoyo externo, ¿qué problema resolverías primero? <span class="required">*</span></label>
+                <textarea class="form-control" name="hair_on_fire" rows="3" required maxlength="600" placeholder="Ej. Necesitamos justificar prioridades de inversión con datos porque el presupuesto se define en 30 días."></textarea>
+                <div class="invalid-feedback">Este campo es clave. Ingresá una respuesta concreta.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">¿Cómo lo están resolviendo hoy?</label>
+                <textarea class="form-control" name="current_workaround" rows="3" maxlength="500" placeholder="Ej. Excel, reuniones, intuición, informes manuales, consultorías aisladas..."></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">¿Qué resultado tendrías que mostrar para decir “esto funcionó”?</label>
+                <textarea class="form-control" name="success_metric" rows="3" maxlength="500" placeholder="Ej. más ocupación fuera de temporada, mejores reportes, consenso privado, proyectos financiados..."></textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label mb-3">¿Qué trabajo necesitás que una solución haga por vos?</label>
+                <div id="jtbdOptions" class="option-grid compact"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <span>4</span>
+          <div>
+            <h2>Urgencia, impacto y compra</h2>
+            <p>Sin urgencia ni presupuesto, el dolor puede ser real pero no necesariamente vendible.</p>
+          </div>
+        </div>
+
+        <div class="card form-card mb-4">
+          <div class="card-body p-4">
+            <div class="row g-4">
+              <div class="col-lg-6">
+                <label class="form-label">Urgencia del problema principal <span class="required">*</span></label>
+                <div class="scale-row" role="radiogroup" aria-label="Urgencia">
+                  <input type="radio" class="btn-check" name="urgency" id="urg1" value="1" required>
+                  <label class="btn btn-outline-secondary" for="urg1">1</label>
+                  <input type="radio" class="btn-check" name="urgency" id="urg2" value="2">
+                  <label class="btn btn-outline-secondary" for="urg2">2</label>
+                  <input type="radio" class="btn-check" name="urgency" id="urg3" value="3">
+                  <label class="btn btn-outline-secondary" for="urg3">3</label>
+                  <input type="radio" class="btn-check" name="urgency" id="urg4" value="4">
+                  <label class="btn btn-outline-secondary" for="urg4">4</label>
+                  <input type="radio" class="btn-check" name="urgency" id="urg5" value="5">
+                  <label class="btn btn-outline-secondary" for="urg5">5</label>
+                </div>
+                <div class="scale-help"><span>Baja</span><span>Alta / crítica</span></div>
+              </div>
+              <div class="col-lg-6">
+                <label class="form-label">Impacto si se resolviera <span class="required">*</span></label>
+                <div class="scale-row" role="radiogroup" aria-label="Impacto">
+                  <input type="radio" class="btn-check" name="impact" id="imp1" value="1" required>
+                  <label class="btn btn-outline-secondary" for="imp1">1</label>
+                  <input type="radio" class="btn-check" name="impact" id="imp2" value="2">
+                  <label class="btn btn-outline-secondary" for="imp2">2</label>
+                  <input type="radio" class="btn-check" name="impact" id="imp3" value="3">
+                  <label class="btn btn-outline-secondary" for="imp3">3</label>
+                  <input type="radio" class="btn-check" name="impact" id="imp4" value="4">
+                  <label class="btn btn-outline-secondary" for="imp4">4</label>
+                  <input type="radio" class="btn-check" name="impact" id="imp5" value="5">
+                  <label class="btn btn-outline-secondary" for="imp5">5</label>
+                </div>
+                <div class="scale-help"><span>Menor</span><span>Alto impacto político/técnico</span></div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Disposición a pagar / contratar <span class="required">*</span></label>
+                <select class="form-select" name="willingness_to_pay" required>
+                  <option value="">Seleccionar...</option>
+                  <option>Sí, tengo presupuesto o puedo activarlo</option>
+                  <option>Probablemente, si el problema es prioritario</option>
+                  <option>Necesitaría validación política/técnica</option>
+                  <option>Hoy no hay presupuesto</option>
+                  <option>No contrataría apoyo externo</option>
+                </select>
+                <div class="invalid-feedback">Seleccioná una opción.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Rango mensual/proyecto estimado</label>
+                <select class="form-select" name="budget_range">
+                  <option value="">No sabe / no responde</option>
+                  <option>Hasta USD 500</option>
+                  <option>USD 500–1.500</option>
+                  <option>USD 1.500–3.000</option>
+                  <option>USD 3.000–7.000</option>
+                  <option>Más de USD 7.000</option>
+                  <option>Depende de licitación / contratación pública</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Cuándo podría contratarse algo así <span class="required">*</span></label>
+                <select class="form-select" name="buying_timeline" required>
+                  <option value="">Seleccionar...</option>
+                  <option>0–30 días</option>
+                  <option>1–3 meses</option>
+                  <option>3–6 meses</option>
+                  <option>Próximo presupuesto anual</option>
+                  <option>No está en agenda</option>
+                </select>
+                <div class="invalid-feedback">Seleccioná el plazo.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <span>5</span>
+          <div>
+            <h2>Soluciones que tendrían sentido</h2>
+            <p>Elegí hasta 4 posibles servicios. Esto orienta el portfolio, no lo encorseta.</p>
+          </div>
+        </div>
+
+        <div class="card form-card mb-4">
+          <div class="card-body p-4">
+            <label class="form-label mb-3">¿Qué tipo de apoyo externo sería más útil?</label>
+            <div id="serviceOptions" class="option-grid"></div>
+            <div class="form-text mt-2">Máximo 4 opciones.</div>
+            <div class="mt-3 d-none" id="otherServiceWrap">
+              <label class="form-label">Otro servicio potencial</label>
+              <input class="form-control" name="desired_service_other" placeholder="Describilo en pocas palabras">
+            </div>
+            <div class="mt-3">
+              <label class="form-label">Algo más que ayude a entender el problema</label>
+              <textarea class="form-control" name="evidence_notes" rows="3" maxlength="600" placeholder="Contexto, trabas, indicadores, tensiones, restricciones de contratación, etc."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <span>6</span>
+          <div>
+            <h2>Contacto opcional</h2>
+            <p>Solo para profundizar hallazgos. No bloquea la respuesta.</p>
+          </div>
+        </div>
+
+        <div class="card form-card mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Nombre</label>
+                <input class="form-control" name="respondent_name" placeholder="Opcional">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Email</label>
+                <input class="form-control" name="email" type="email" placeholder="Opcional">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Teléfono / WhatsApp</label>
+                <input class="form-control" name="phone" placeholder="Opcional">
+              </div>
+              <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="contact_ok" id="contactOk">
+                  <label class="form-check-label" for="contactOk">Acepto que me contacten para ampliar la respuesta o compartir conclusiones generales del relevamiento.</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="submit-bar">
+          <div>
+            <p class="mb-0 fw-semibold">Enviar respuesta</p>
+            <p class="mb-0 small text-secondary">Los datos se registran en Supabase y alimentan el panel de hallazgos.</p>
+          </div>
+          <button id="submitBtn" class="btn btn-dark btn-lg" type="submit">
+            <span class="btn-text">Enviar encuesta</span>
+            <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="appToast" class="toast align-items-center border-0" role="status" aria-live="polite" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastBody"></div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-top py-4 bg-white">
+    <div class="container d-flex flex-column flex-md-row justify-content-between gap-2 small text-secondary">
+      <span>Radar de Prioridades Turísticas</span>
+      <span>Investigación de mercado para servicios turísticos públicos.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
