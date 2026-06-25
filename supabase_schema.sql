@@ -1,5 +1,6 @@
 -- Radar de Prioridades Turísticas
 -- Backend Supabase para encuesta pública + panel admin privado.
+-- Versión editable: contenidos configurables + borrado de respuestas desde admin.
 
 create extension if not exists pgcrypto;
 
@@ -14,7 +15,7 @@ create table if not exists public.tourism_market_responses (
   contact_ok boolean not null default false,
   organization text,
   role_title text not null,
-  government_level text not null check (government_level in ('Municipal', 'Provincial', 'Nacional', 'Ente mixto / público-privado', 'Otro')),
+  government_level text not null,
   jurisdiction_name text not null,
   province text,
   destination_type text not null,
@@ -45,13 +46,32 @@ create table if not exists public.tourism_market_responses (
   constraint chk_desired_services_count check (cardinality(desired_services) <= 4)
 );
 
+-- Migración segura para instalaciones anteriores: se elimina el check rígido del nivel de gobierno,
+-- porque ahora las opciones se administran desde el panel y se guardan con IDs internos estables.
+alter table public.tourism_market_responses
+  drop constraint if exists tourism_market_responses_government_level_check;
+
 create index if not exists idx_tourism_responses_created_at on public.tourism_market_responses (created_at desc);
 create index if not exists idx_tourism_responses_government_level on public.tourism_market_responses (government_level);
 create index if not exists idx_tourism_responses_province on public.tourism_market_responses (province);
 create index if not exists idx_tourism_responses_top_problems on public.tourism_market_responses using gin (top_problems);
 create index if not exists idx_tourism_responses_desired_services on public.tourism_market_responses using gin (desired_services);
 
+-- Configuración editable de la encuesta.
+-- content guarda textos, labels, placeholders, opciones visibles e instrucciones de la página.
+create table if not exists public.tourism_survey_config (
+  id text primary key default 'default',
+  content jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+insert into public.tourism_survey_config (id, content)
+values ('default', '{}'::jsonb)
+on conflict (id) do nothing;
+
 alter table public.tourism_market_responses enable row level security;
+alter table public.tourism_survey_config enable row level security;
 
 -- La encuesta pública puede insertar respuestas sin login.
 drop policy if exists "Public can insert survey responses" on public.tourism_market_responses;
@@ -61,7 +81,7 @@ for insert
 to anon, authenticated
 with check (true);
 
--- El panel admin requiere usuario autenticado en Supabase Auth.
+-- El panel admin requiere usuario autenticado en Supabase Auth para leer resultados.
 drop policy if exists "Authenticated users can read survey responses" on public.tourism_market_responses;
 create policy "Authenticated users can read survey responses"
 on public.tourism_market_responses
@@ -69,8 +89,50 @@ for select
 to authenticated
 using (auth.uid() is not null);
 
--- Opcional: permitir borrar respuestas desde SQL/Supabase, no desde la app.
--- No se crea política de update/delete desde frontend.
+-- El panel admin puede borrar respuestas de prueba, duplicadas o inválidas.
+drop policy if exists "Authenticated users can delete survey responses" on public.tourism_market_responses;
+create policy "Authenticated users can delete survey responses"
+on public.tourism_market_responses
+for delete
+to authenticated
+using (auth.uid() is not null);
+
+-- La configuración de la encuesta debe poder leerse públicamente para renderizar la encuesta.
+drop policy if exists "Public can read survey config" on public.tourism_survey_config;
+create policy "Public can read survey config"
+on public.tourism_survey_config
+for select
+to anon, authenticated
+using (true);
+
+-- Solo usuarios autenticados pueden crear/actualizar/restaurar la configuración desde el admin.
+drop policy if exists "Authenticated users can insert survey config" on public.tourism_survey_config;
+create policy "Authenticated users can insert survey config"
+on public.tourism_survey_config
+for insert
+to authenticated
+with check (auth.uid() is not null);
+
+drop policy if exists "Authenticated users can update survey config" on public.tourism_survey_config;
+create policy "Authenticated users can update survey config"
+on public.tourism_survey_config
+for update
+to authenticated
+using (auth.uid() is not null)
+with check (auth.uid() is not null);
+
+drop policy if exists "Authenticated users can delete survey config" on public.tourism_survey_config;
+create policy "Authenticated users can delete survey config"
+on public.tourism_survey_config
+for delete
+to authenticated
+using (auth.uid() is not null);
+
+-- Grants explícitos para evitar problemas de permisos en proyectos con defaults más restrictivos.
+grant insert on public.tourism_market_responses to anon, authenticated;
+grant select, delete on public.tourism_market_responses to authenticated;
+grant select on public.tourism_survey_config to anon, authenticated;
+grant insert, update, delete on public.tourism_survey_config to authenticated;
 
 -- Vista útil para inspección rápida en Supabase.
 create or replace view public.v_tourism_market_responses_summary
@@ -92,7 +154,6 @@ select
   hair_on_fire
 from public.tourism_market_responses
 order by created_at desc;
-
 
 revoke all on public.v_tourism_market_responses_summary from anon, public;
 grant select on public.v_tourism_market_responses_summary to authenticated;

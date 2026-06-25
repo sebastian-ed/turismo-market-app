@@ -14,12 +14,13 @@
     <header class="admin-header sticky-top">
       <div class="container py-3 d-flex justify-content-between align-items-center gap-3">
         <div>
-          <a class="navbar-brand fw-semibold text-decoration-none text-dark" href="index.html">Radar de Prioridades Turísticas</a>
-          <div class="small text-secondary">Panel admin de hallazgos y oportunidades</div>
+          <a id="adminBrand" class="navbar-brand fw-semibold text-decoration-none text-dark" href="index.html">Radar de Prioridades Turísticas</a>
+          <div id="adminSubtitle" class="small text-secondary">Panel admin de hallazgos y oportunidades</div>
         </div>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
           <span id="userEmail" class="small text-secondary d-none d-md-inline"></span>
           <button id="refreshBtn" class="btn btn-sm btn-outline-secondary d-none"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar</button>
+          <button id="pdfBtn" class="btn btn-sm btn-outline-secondary d-none"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</button>
           <button id="exportBtn" class="btn btn-sm btn-dark d-none"><i class="bi bi-download me-1"></i>CSV</button>
           <button id="logoutBtn" class="btn btn-sm btn-outline-secondary d-none">Salir</button>
         </div>
@@ -29,9 +30,9 @@
     <main>
       <section id="loginSection" class="login-wrap">
         <div class="login-card">
-          <p class="eyebrow mb-2">Acceso privado</p>
-          <h1 class="h3 fw-semibold mb-2">Ingresar al panel admin</h1>
-          <p class="text-secondary mb-4">Usá un usuario creado en Supabase Auth. La encuesta es pública; la lectura de resultados queda restringida.</p>
+          <p id="loginEyebrow" class="eyebrow mb-2">Acceso privado</p>
+          <h1 id="loginTitle" class="h3 fw-semibold mb-2">Ingresar al panel admin</h1>
+          <p id="loginText" class="text-secondary mb-4">Usá un usuario creado en Supabase Auth. La encuesta es pública; la lectura de resultados queda restringida.</p>
           <div id="loginConfigAlert" class="alert alert-warning d-none">Falta configurar Supabase en <strong>config.js</strong>.</div>
           <form id="loginForm" novalidate>
             <div class="mb-3">
@@ -44,11 +45,15 @@
             </div>
             <button id="loginBtn" class="btn btn-dark w-100" type="submit">Ingresar</button>
           </form>
-          <p class="small text-secondary mt-3 mb-0">Si todavía no tenés usuario admin, crealo en Supabase → Authentication → Users.</p>
+          <p id="loginHelp" class="small text-secondary mt-3 mb-0">Si todavía no tenés usuario admin, crealo en Supabase → Authentication → Users.</p>
         </div>
       </section>
 
       <section id="dashboardSection" class="container py-4 d-none">
+        <div class="alert alert-info border-0 shadow-sm mb-4">
+          <strong>Gestión operativa:</strong> desde este panel podés editar textos, preguntas, opciones visibles y eliminar respuestas de prueba. Los IDs internos de opciones no se tocan: esa es la póliza de seguro para que los reportes no se incendien.
+        </div>
+
         <div id="emptyState" class="empty-state d-none">
           <h2 class="h5">Todavía no hay respuestas</h2>
           <p class="mb-0">Cuando se complete la encuesta, el panel va a mostrar frecuencias, oportunidades y señales de compra.</p>
@@ -103,6 +108,26 @@
               <div class="col-md-3">
                 <label class="form-label small">Buscar texto</label>
                 <input id="filterSearch" class="form-control form-control-sm" placeholder="Destino, dolor, servicio...">
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-tools-card mb-4">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+              <div>
+                <h2 class="h5 mb-1">Contenido editable de la encuesta</h2>
+                <p class="text-secondary mb-0 small">Editá títulos, subtítulos, descripciones, labels, placeholders y opciones visibles. Guardar impacta en la encuesta pública y en cómo se etiquetan los reportes.</p>
+              </div>
+              <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#contentEditorCollapse" aria-expanded="false" aria-controls="contentEditorCollapse">
+                <i class="bi bi-pencil-square me-1"></i>Editar contenido
+              </button>
+            </div>
+            <div id="contentEditorCollapse" class="collapse mt-4">
+              <div id="contentEditor" class="content-editor"></div>
+              <div class="d-flex flex-wrap gap-2 justify-content-end mt-3 pt-3 border-top">
+                <button id="reloadConfigBtn" class="btn btn-outline-secondary" type="button">Recargar contenido</button>
+                <button id="resetConfigBtn" class="btn btn-outline-danger" type="button">Restaurar base</button>
+                <button id="saveConfigBtn" class="btn btn-dark" type="button"><i class="bi bi-save me-1"></i>Guardar cambios</button>
               </div>
             </div>
           </div>
@@ -167,14 +192,21 @@
           </div>
 
           <div class="table-card mb-5">
-            <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
-              <h2 class="h6 mb-0">Respuestas individuales</h2>
-              <span id="visibleCount" class="small text-secondary"></span>
+            <div class="p-3 border-bottom d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+              <div>
+                <h2 class="h6 mb-1">Respuestas individuales</h2>
+                <span id="visibleCount" class="small text-secondary"></span>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button id="deleteSelectedBtn" class="btn btn-sm btn-outline-danger" type="button" disabled><i class="bi bi-trash me-1"></i>Eliminar seleccionadas</button>
+                <button id="deleteFilteredBtn" class="btn btn-sm btn-outline-danger" type="button"><i class="bi bi-funnel me-1"></i>Eliminar filtradas</button>
+              </div>
             </div>
             <div class="table-responsive">
               <table class="table table-hover align-middle">
                 <thead>
                   <tr>
+                    <th><input id="selectAllResponses" class="form-check-input" type="checkbox" aria-label="Seleccionar todas"></th>
                     <th>Fecha</th>
                     <th>Jurisdicción</th>
                     <th>Nivel</th>
@@ -184,6 +216,7 @@
                     <th>Pago</th>
                     <th>Hair-on-fire</th>
                     <th>Contacto</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody id="responsesTable"></tbody>
@@ -193,6 +226,98 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <div class="modal fade" id="responseDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5">Detalle de respuesta</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div id="responseDetailBody" class="modal-body"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <div>
+            <p class="eyebrow text-danger mb-2">Acción irreversible</p>
+            <h2 class="modal-title h5 mb-0">Confirmar eliminación</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger mb-3">
+            <strong id="deleteConfirmationTitle">Vas a eliminar respuestas.</strong>
+            <div id="deleteConfirmationDetail" class="small mt-1"></div>
+          </div>
+          <p class="mb-2">Para continuar, escribí exactamente:</p>
+          <div id="deleteConfirmationPhrase" class="confirmation-phrase mb-3">ELIMINAR DEFINITIVAMENTE</div>
+          <label class="form-label" for="deleteConfirmationInput">Texto de confirmación</label>
+          <input id="deleteConfirmationInput" class="form-control" type="text" autocomplete="off" spellcheck="false" placeholder="Escribí la frase completa">
+          <div class="form-text">El botón se habilita únicamente cuando la frase coincide de forma exacta.</div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmDeleteBtn" type="button" class="btn btn-danger" disabled><i class="bi bi-trash me-1"></i>Eliminar definitivamente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="pdfExportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow mb-1">Exportación</p>
+            <h2 class="modal-title h5 mb-0">Descargar PDF</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-secondary">Seleccioná qué contenido querés incluir. El PDF respeta los filtros activos del panel.</p>
+
+          <label class="pdf-export-option mb-3" for="pdfIncludeReport">
+            <input id="pdfIncludeReport" class="form-check-input mt-1" type="checkbox" checked>
+            <span>
+              <strong>Informe ejecutivo</strong>
+              <small>Incluye indicadores, gráficos, oportunidades priorizadas, palabras frecuentes y frases destacadas.</small>
+            </span>
+          </label>
+
+          <label class="pdf-export-option mb-3" for="pdfIncludeResponses">
+            <input id="pdfIncludeResponses" class="form-check-input mt-1" type="checkbox">
+            <span>
+              <strong>Respuestas individuales</strong>
+              <small>Incluye cada formulario completo, con el destino claramente identificado en el encabezado.</small>
+            </span>
+          </label>
+
+          <div id="pdfResponseScope" class="pdf-scope-panel d-none">
+            <div class="fw-semibold mb-2">Qué respuestas individuales incluir</div>
+            <div class="form-check mb-2">
+              <input id="pdfScopeFiltered" class="form-check-input" type="radio" name="pdfResponseScope" value="filtered" checked>
+              <label class="form-check-label" for="pdfScopeFiltered">Todas las respuestas visibles según los filtros (<span id="pdfFilteredCount">0</span>)</label>
+            </div>
+            <div class="form-check">
+              <input id="pdfScopeSelected" class="form-check-input" type="radio" name="pdfResponseScope" value="selected">
+              <label class="form-check-label" for="pdfScopeSelected">Solo las respuestas seleccionadas en la tabla (<span id="pdfSelectedCount">0</span>)</label>
+            </div>
+          </div>
+          <div id="pdfExportValidation" class="field-error d-none mt-3">Seleccioná al menos un contenido para generar el PDF.</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="generatePdfBtn" type="button" class="btn btn-dark"><i class="bi bi-file-earmark-pdf me-1"></i>Generar PDF</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -207,7 +332,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js"></script>
   <script src="config.js"></script>
+  <script src="survey-config.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
